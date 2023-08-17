@@ -29,10 +29,16 @@ app.get('/books', (req, res) => {
 })
 
 app.get('/books/:id', (req, res) => {
+    //check validity
+    if(ObjectId.isValid(req.params.id)){
+        //find one book
+        db.collection('books')
+            .findOne({_id: new ObjectId(req.params.id)})
+            .then(doc => res.status(200).json(doc))
+            .catch(error => res.status(500).json({error: 'Could not fetch the document'}))
+    } else {
+        res.status(500).json({error: "Not a valid JSON"})
+    }
 
-    //find one book
-    db.collection('books')
-        .findOne({_id: new ObjectId(req.params.id)})
-        .then(doc => res.status(200).json(doc))
-        .catch(error => res.status(500).json({error: 'Could not fetch the document'}))
+    
 })
