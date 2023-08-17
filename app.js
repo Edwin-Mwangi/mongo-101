@@ -39,6 +39,15 @@ app.get('/books/:id', (req, res) => {
     } else {
         res.status(500).json({error: "Not a valid JSON"})
     }
+})
 
-    
+//post data
+app.post('/books', (req, res) => {
+    const book = req.body
+    db.collection('books')
+        .insertOne(book)
+        .then(result => { //result is the acknowledgement returned
+            res.status(201).json(result)
+        })
+        .catch(err => res.status(500).json({err: "Couldn't create new doc"}))
 })
