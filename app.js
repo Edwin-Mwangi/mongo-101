@@ -18,13 +18,23 @@ connectToDb( err => {
 app.use(express.json())
 
 //routes
+//we'll also use pagination in GET to allow 3bks per page
+//the query param we'll look like...the p (after the '?')
+//p=0 is page 1,p=1 is page 2...etc
+// [http://localhost:3000/books?p=0]
+
 app.get('/books', (req, res) => {
+    //getting the query param val..0 if none defined
+    const page = req.query.p || 0;
+    const booksPerPage = 3;
 
     let books = []
     //find all books
     db.collection('books')
         .find()//returns cursor...can use forEach or toArray
         .sort({author: 1})
+        .skip(page * booksPerPage)//how many bks to skip at a page
+        .limit(booksPerPage)//only 3 bks per page
         .forEach(book => books.push(book))
         .then(() => res.status(200).json(books))
         .catch(() => res.status(500).json({error: 'Could not fetch documents'}))
