@@ -66,3 +66,19 @@ app.delete('/books/:id', (req, res) => {
         res.status(500).json({error: "Not a valid JSON"})
     }
 })
+
+//updating data...changing items 
+app.patch('/books/:id', (req,res) => {
+    //get updates from the request obj
+    const updates = req.body
+
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+            // takes 2 args the id and the changes to be set
+            .updateOne({_id: new ObjectId(req.params.id)}, {$set: updates})
+            .then(result => res.status(200).json(result))
+            .catch(error => res.status(500).json({error: 'Could not update the document'}))
+    } else {
+        res.status(500).json({error: "Not a valid JSON"})
+    }
+})
