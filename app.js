@@ -14,6 +14,9 @@ connectToDb( err => {
     }
 })
 
+//middleware to access req body data
+app.use(express.json())
+
 //routes
 app.get('/books', (req, res) => {
 
@@ -50,4 +53,16 @@ app.post('/books', (req, res) => {
             res.status(201).json(result)
         })
         .catch(err => res.status(500).json({err: "Couldn't create new doc"}))
+})
+
+//delete data...use id
+app.delete('/books/:id', (req, res) => {
+    if(ObjectId.isValid(req.params.id)){
+        db.collection('books')
+            .deleteOne({_id: new ObjectId(req.params.id)})
+            .then(doc => res.status(200).json(doc))
+            .catch(error => res.status(500).json({error: 'Could not delete the document'}))
+    } else {
+        res.status(500).json({error: "Not a valid JSON"})
+    }
 })
